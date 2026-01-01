@@ -221,8 +221,8 @@ This project is proprietary and owned by [Platform Owner].
 ## 📞 Support
 
 For support and inquiries:
-- Email: support@rms-platform.com
-- Phone: +254 XXX XXX XXX
+- Email: info@wiktechnologies.com
+- Phone: +254 729 089 168
 
 ## 🗺️ Roadmap
 
