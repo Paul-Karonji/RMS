@@ -2,8 +2,27 @@
 
 namespace App\Models;
 
-class PlatformUser extends BaseUuidModel
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Laravel\Sanctum\HasApiTokens;
+
+class PlatformUser extends Authenticatable
 {
+    use HasUuids, HasApiTokens;
+
+    /**
+     * Indicates if the model's ID is auto-incrementing.
+     *
+     * @var bool
+     */
+    public $incrementing = false;
+
+    /**
+     * The data type of the auto-incrementing ID.
+     *
+     * @var string
+     */
+    protected $keyType = 'string';
 
     /**
      * The attributes that are mass assignable.
@@ -26,6 +45,14 @@ class PlatformUser extends BaseUuidModel
     protected $hidden = [
         'password_hash',
     ];
+
+    /**
+     * Get the password for authentication.
+     */
+    public function getAuthPassword()
+    {
+        return $this->password_hash;
+    }
 
     /**
      * Get the companies created by this platform user.
