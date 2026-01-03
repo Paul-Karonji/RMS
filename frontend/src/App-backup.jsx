@@ -5,11 +5,8 @@ import 'react-toastify/dist/ReactToastify.css';
 import { AuthProvider } from './contexts/AuthContext';
 import ProtectedRoute from './routes/ProtectedRoute';
 
-import Login from './pages/auth/Login';
-import Register from './pages/auth/Register';
-import ForgotPassword from './pages/auth/ForgotPassword';
-import ResetPassword from './pages/auth/ResetPassword';
-import Dashboard from './pages/dashboard/Dashboard';
+import { Login, Register, ForgotPassword, ResetPassword } from './pages/auth';
+import { Dashboard } from './pages/dashboard';
 
 function App() {
   return (
