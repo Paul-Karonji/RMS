@@ -12,6 +12,7 @@ class CompanyBalance extends BaseTenantModel
      * @var array
      */
     protected $fillable = [
+        'tenant_id',
         'available_balance',
         'pending_balance',
         'total_collected',

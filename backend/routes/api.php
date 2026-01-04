@@ -5,6 +5,10 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
+use App\Http\Controllers\Platform\Auth\PlatformLoginController;
+use App\Http\Controllers\Platform\TenantController;
+use App\Http\Controllers\Platform\DashboardController;
+use App\Http\Controllers\Platform\RevenueController;
 
 /*
 |--------------------------------------------------------------------------
@@ -37,6 +41,19 @@ Route::prefix('auth')->group(function () {
     // Reset Password
     Route::post('/reset-password', [ResetPasswordController::class, 'reset'])
         ->name('auth.reset-password');
+});
+
+// Platform Owner Authentication
+Route::prefix('platform/auth')->group(function () {
+    Route::post('/login', [PlatformLoginController::class, 'login'])
+        ->name('platform.auth.login');
+    
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::post('/logout', [PlatformLoginController::class, 'logout'])
+            ->name('platform.auth.logout');
+        Route::get('/me', [PlatformLoginController::class, 'me'])
+            ->name('platform.auth.me');
+    });
 });
 
 // ==========================================================================
@@ -76,9 +93,21 @@ Route::middleware('auth:sanctum')->group(function () {
     // ==========================================================================
 
     // Platform Owner Routes
-    Route::middleware('role:platform_owner,platform_admin')->prefix('platform')->group(function () {
-        // Placeholder for platform owner routes
-        // These will be added in subsequent weeks
+    Route::middleware('platform.role:platform_owner')->prefix('platform')->group(function () {
+        // Dashboard
+        Route::get('dashboard', [DashboardController::class, 'index'])
+            ->name('platform.dashboard');
+        
+        // Revenue
+        Route::get('revenue', [RevenueController::class, 'summary'])
+            ->name('platform.revenue');
+        
+        // Tenants (Companies)
+        Route::apiResource('tenants', TenantController::class);
+        Route::post('tenants/{tenant}/suspend', [TenantController::class, 'suspend'])
+            ->name('platform.tenants.suspend');
+        Route::post('tenants/{tenant}/activate', [TenantController::class, 'activate'])
+            ->name('platform.tenants.activate');
     });
 
     // Company Admin Routes

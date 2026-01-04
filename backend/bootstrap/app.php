@@ -15,6 +15,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'tenant' => \App\Http\Middleware\EnsureTenantContext::class,
             'role' => \App\Http\Middleware\CheckRole::class,
+            'platform.role' => \App\Http\Middleware\CheckPlatformRole::class,
         ]);
 
         // Disable CSRF for API routes (using Sanctum token authentication instead)

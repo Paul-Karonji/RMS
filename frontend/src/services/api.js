@@ -13,9 +13,15 @@ const api = axios.create({
 // Request interceptor - Add auth token to requests
 api.interceptors.request.use(
   (config) => {
-    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+    if (typeof window !== 'undefined') {
+      // Check for platform token first (for platform routes)
+      const platformToken = localStorage.getItem('platform_token');
+      const regularToken = localStorage.getItem('token');
+      
+      const token = platformToken || regularToken;
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
     }
     return config;
   },

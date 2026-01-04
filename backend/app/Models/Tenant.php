@@ -72,6 +72,14 @@ class Tenant extends BaseUuidModel
     }
 
     /**
+     * Alias for companyBalance relationship.
+     */
+    public function balance()
+    {
+        return $this->companyBalance();
+    }
+
+    /**
      * Get subscription invoices for this tenant.
      */
     public function subscriptionInvoices()
@@ -141,5 +149,29 @@ class Tenant extends BaseUuidModel
     public function balanceTransactions()
     {
         return $this->hasMany(BalanceTransaction::class);
+    }
+
+    /**
+     * Scope a query to only include active tenants.
+     */
+    public function scopeActive($query)
+    {
+        return $query->where('status', 'active');
+    }
+
+    /**
+     * Scope a query to only include payment processing tenants.
+     */
+    public function scopePaymentProcessing($query)
+    {
+        return $query->where('pricing_model', 'payment_processing');
+    }
+
+    /**
+     * Scope a query to only include listings only tenants.
+     */
+    public function scopeListingsOnly($query)
+    {
+        return $query->where('pricing_model', 'listings_only');
     }
 }
