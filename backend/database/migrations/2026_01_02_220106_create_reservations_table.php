@@ -11,7 +11,7 @@ return new class extends Migration
         Schema::create('reservations', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->uuid('unit_id');
-            $table->uuid('tenant_id');
+            $table->uuid('tenant_id')->nullable();
             $table->uuid('rental_inquiry_id')->nullable();
             $table->timestamp('reservation_date');
             $table->timestamp('expiry_date');

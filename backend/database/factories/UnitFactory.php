@@ -22,7 +22,7 @@ class UnitFactory extends Factory
         
         return [
             'property_id' => \App\Models\Property::factory(),
-            'unit_number' => strtoupper(fake()->bothify('?##')),
+            'unit_number' => strtoupper(fake()->unique()->bothify('??###')),
             'unit_type' => $unitTypes[$bedrooms - 1] ?? 'Studio',
             'bedrooms' => $bedrooms,
             'bathrooms' => fake()->numberBetween(1, $bedrooms),
@@ -37,6 +37,7 @@ class UnitFactory extends Factory
             'allow_pets' => fake()->boolean(20),
             'parking_available' => fake()->boolean(70),
             'parking_spaces' => fake()->numberBetween(0, 2),
+            'is_publicly_listed' => true,
         ];
     }
 }

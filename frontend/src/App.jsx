@@ -31,12 +31,26 @@ import {
   CompanyDashboard,
 } from './pages/properties';
 
+// Public Marketplace Pages (Week 8)
+import {
+  UnitSearch,
+  UnitDetails,
+  InquiryForm,
+  ReservationCheckout,
+} from './pages/public';
+
 function App() {
   return (
     <AuthProvider>
       <Router>
         <Routes>
-          {/* Public Routes */}
+          {/* Public Marketplace Routes (Week 8) */}
+          <Route path="/units" element={<UnitSearch />} />
+          <Route path="/units/:id" element={<UnitDetails />} />
+          <Route path="/units/:id/inquiry" element={<InquiryForm />} />
+          <Route path="/units/:id/reserve" element={<ReservationCheckout />} />
+
+          {/* Auth Routes */}
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
@@ -71,8 +85,8 @@ function App() {
           </Route>
 
           {/* Default redirect */}
-          <Route path="/" element={<Navigate to="/login" replace />} />
-          <Route path="*" element={<Navigate to="/login" replace />} />
+          <Route path="/" element={<Navigate to="/units" replace />} />
+          <Route path="*" element={<Navigate to="/units" replace />} />
         </Routes>
       </Router>
       <ToastContainer

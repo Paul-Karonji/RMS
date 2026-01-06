@@ -118,8 +118,8 @@ class Unit extends BaseUuidModel
     public function activeReservation()
     {
         return $this->hasOne(Reservation::class)
-            ->where('status', 'pending')
-            ->where('expires_at', '>', now());
+            ->where('status', 'active')
+            ->where('expiry_date', '>', now());
     }
 
     /**

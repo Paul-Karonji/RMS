@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
 
-class Reservation extends BaseTenantModel
+class Reservation extends BaseUuidModel
 {
     /** @use HasFactory<\Database\Factories\ReservationFactory> */
     use HasFactory;
@@ -18,20 +18,19 @@ class Reservation extends BaseTenantModel
      */
     protected $fillable = [
         'unit_id',
+        'tenant_id',
         'rental_inquiry_id',
-        'tenant_name',
-        'tenant_email',
-        'tenant_phone',
+        'guest_name',
+        'guest_email',
+        'guest_phone',
         'deposit_amount',
+        'reservation_date',
+        'expiry_date',
         'move_in_date',
-        'expires_at',
         'status',
         'payment_method',
         'payment_status',
         'transaction_id',
-        'refunded_amount',
-        'refunded_at',
-        'refund_reason',
         'notes',
     ];
 
@@ -42,10 +41,11 @@ class Reservation extends BaseTenantModel
      */
     protected $casts = [
         'move_in_date' => 'date',
-        'expires_at' => 'datetime',
-        'refunded_at' => 'datetime',
+        'reservation_date' => 'datetime',
+        'expiry_date' => 'datetime',
+        'confirmed_at' => 'datetime',
+        'cancelled_at' => 'datetime',
         'deposit_amount' => 'decimal:2',
-        'refunded_amount' => 'decimal:2',
     ];
 
     /**
@@ -86,7 +86,7 @@ class Reservation extends BaseTenantModel
      */
     public function isActive(): bool
     {
-        return $this->status === 'active' && $this->expires_at > now();
+        return $this->status === 'active' && $this->expiry_date > now();
     }
 
     /**
@@ -94,7 +94,7 @@ class Reservation extends BaseTenantModel
      */
     public function isExpired(): bool
     {
-        return $this->status === 'active' && $this->expires_at <= now();
+        return $this->status === 'active' && $this->expiry_date <= now();
     }
 
     /**
@@ -130,7 +130,7 @@ class Reservation extends BaseTenantModel
             return 'Expired';
         }
 
-        return $this->expires_at->diffForHumans(now(), true);
+        return $this->expiry_date->diffForHumans(now(), true);
     }
 
     /**

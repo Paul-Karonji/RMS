@@ -12,6 +12,9 @@ use App\Http\Controllers\Platform\RevenueController;
 use App\Http\Controllers\Api\PropertyController;
 use App\Http\Controllers\Api\PropertyApprovalController;
 use App\Http\Controllers\Api\UnitController;
+use App\Http\Controllers\Api\Public\PublicUnitController;
+use App\Http\Controllers\Api\Public\PublicRentalInquiryController;
+use App\Http\Controllers\Api\Public\PublicReservationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,6 +30,31 @@ use App\Http\Controllers\Api\UnitController;
 // ==========================================================================
 // PUBLIC ROUTES (No authentication required)
 // ==========================================================================
+
+// Public Marketplace Routes (Week 8)
+Route::prefix('public')->group(function () {
+    // Unit search and details
+    Route::get('units', [PublicUnitController::class, 'index'])
+        ->name('public.units.index');
+    Route::get('units/filter-options', [PublicUnitController::class, 'filterOptions'])
+        ->name('public.units.filter-options');
+    Route::get('units/{id}', [PublicUnitController::class, 'show'])
+        ->name('public.units.show');
+    
+    // Rental inquiries
+    Route::post('inquiries', [PublicRentalInquiryController::class, 'store'])
+        ->name('public.inquiries.store');
+    Route::get('inquiries/{id}', [PublicRentalInquiryController::class, 'show'])
+        ->name('public.inquiries.show');
+    
+    // Reservations
+    Route::post('units/{unitId}/reserve', [PublicReservationController::class, 'store'])
+        ->name('public.reservations.store');
+    Route::get('reservations/{id}', [PublicReservationController::class, 'show'])
+        ->name('public.reservations.show');
+    Route::post('reservations/{id}/cancel', [PublicReservationController::class, 'cancel'])
+        ->name('public.reservations.cancel');
+});
 
 Route::prefix('auth')->group(function () {
     // Login
