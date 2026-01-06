@@ -277,6 +277,23 @@ class User extends Authenticatable
     }
 
     /**
+     * Override Spatie's hasRole to check the role column instead.
+     * This allows using the simple role column instead of the roles table.
+     */
+    public function hasRole($roles, string $guard = null): bool
+    {
+        if (is_string($roles)) {
+            return $this->role === $roles;
+        }
+
+        if (is_array($roles)) {
+            return in_array($this->role, $roles);
+        }
+
+        return false;
+    }
+
+    /**
      * Get the password for authentication.
      */
     public function getAuthPassword()

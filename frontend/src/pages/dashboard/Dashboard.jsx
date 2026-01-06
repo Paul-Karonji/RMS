@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { Navbar } from '../../components/layout';
 import { Card } from '../../components/common';
@@ -10,6 +11,7 @@ import {
 
 const Dashboard = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
 
   const stats = [
     {
@@ -75,13 +77,19 @@ const Dashboard = () => {
           <Card padding="md">
             <h2 className="text-lg font-semibold text-text mb-4">Quick Actions</h2>
             <div className="space-y-3">
-              <button className="w-full text-left px-4 py-3 rounded-lg border border-slate-200 hover:bg-slate-50 transition-colors">
+              <button 
+                onClick={() => navigate('/company/properties/create')}
+                className="w-full text-left px-4 py-3 rounded-lg border border-slate-200 hover:bg-slate-50 transition-colors"
+              >
                 <p className="font-medium text-text">Add New Property</p>
                 <p className="text-sm text-muted">Register a new property to manage</p>
               </button>
-              <button className="w-full text-left px-4 py-3 rounded-lg border border-slate-200 hover:bg-slate-50 transition-colors">
-                <p className="font-medium text-text">Add New Unit</p>
-                <p className="text-sm text-muted">Add a unit to an existing property</p>
+              <button 
+                onClick={() => navigate('/company/properties')}
+                className="w-full text-left px-4 py-3 rounded-lg border border-slate-200 hover:bg-slate-50 transition-colors"
+              >
+                <p className="font-medium text-text">View Properties</p>
+                <p className="text-sm text-muted">Manage your property portfolio</p>
               </button>
               <button className="w-full text-left px-4 py-3 rounded-lg border border-slate-200 hover:bg-slate-50 transition-colors">
                 <p className="font-medium text-text">Record Payment</p>
