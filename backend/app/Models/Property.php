@@ -17,12 +17,12 @@ class Property extends BaseTenantModel
      */
     protected $fillable = [
         'property_owner_id',
+        'property_name',
         'name',
         'description',
-        'address_line_1',
-        'address_line_2',
+        'address',
         'city',
-        'state',
+        'county',
         'postal_code',
         'country',
         'latitude',
@@ -30,6 +30,8 @@ class Property extends BaseTenantModel
         'property_type',
         'total_units',
         'occupied_units',
+        'vacant_units',
+        'monthly_rental_income',
         'status',
         'approved_by',
         'approved_at',
@@ -37,6 +39,14 @@ class Property extends BaseTenantModel
         'manager_id',
         'commission_percentage',
     ];
+    
+    /**
+     * Set the name attribute (maps to property_name).
+     */
+    public function setNameAttribute($value)
+    {
+        $this->attributes['property_name'] = $value;
+    }
 
     /**
      * Get the property owner who owns this property.

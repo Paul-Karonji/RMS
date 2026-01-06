@@ -13,7 +13,7 @@ class UnitPolicy
      */
     public function viewAny(User $user): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -21,7 +21,7 @@ class UnitPolicy
      */
     public function view(User $user, Unit $unit): bool
     {
-        return false;
+        return $unit->property->tenant_id === $user->tenant_id;
     }
 
     /**
@@ -29,7 +29,7 @@ class UnitPolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        return $user->hasRole(['company_admin', 'company_staff']);
     }
 
     /**
@@ -37,6 +37,17 @@ class UnitPolicy
      */
     public function update(User $user, Unit $unit): bool
     {
+        $property = $unit->property;
+
+        if ($user->hasRole('company_admin')) {
+            return $property->tenant_id === $user->tenant_id;
+        }
+
+        if ($user->hasRole('company_staff')) {
+            return $property->tenant_id === $user->tenant_id && 
+                   $property->manager_id === $user->id;
+        }
+
         return false;
     }
 
@@ -45,7 +56,15 @@ class UnitPolicy
      */
     public function delete(User $user, Unit $unit): bool
     {
-        return false;
+        if (!$user->hasRole('company_admin')) {
+            return false;
+        }
+
+        if ($unit->property->tenant_id !== $user->tenant_id) {
+            return false;
+        }
+
+        return $unit->status === 'available';
     }
 
     /**
@@ -53,7 +72,8 @@ class UnitPolicy
      */
     public function restore(User $user, Unit $unit): bool
     {
-        return false;
+        return $user->hasRole('company_admin') &&
+               $unit->property->tenant_id === $user->tenant_id;
     }
 
     /**

@@ -5,34 +5,30 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Unit extends BaseTenantModel
+class Unit extends BaseUuidModel
 {
     /** @use HasFactory<\Database\Factories\UnitFactory> */
     use HasFactory;
-
+    
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
-    protected $fillable = [
-        'property_id',
-        'unit_number',
-        'unit_type',
-        'bedrooms',
-        'bathrooms',
-        'size_sqft',
-        'monthly_rent',
-        'deposit_amount',
-        'status',
-        'description',
-        'commission_percentage',
-        'is_furnished',
-        'allow_pets',
-        'parking_available',
-        'parking_spaces',
-        'floor_level',
-    ];
+    protected $guarded = ['id', 'tenant_id'];
+
+    /**
+     * Boot the model.
+     */
+    protected static function boot()
+    {
+        parent::boot();
+        
+        static::creating(function ($unit) {
+            // Units table doesn't have tenant_id column, so remove it if present
+            unset($unit->tenant_id);
+        });
+    }
 
     /**
      * Get the property this unit belongs to.

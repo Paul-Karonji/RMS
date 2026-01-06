@@ -16,8 +16,27 @@ class UnitFactory extends Factory
      */
     public function definition(): array
     {
+        $bedrooms = fake()->numberBetween(1, 4);
+        $unitTypes = ['Studio', '1BR', '2BR', '3BR', '4BR'];
+        $rent = $bedrooms * 25000;
+        
         return [
-            //
+            'property_id' => \App\Models\Property::factory(),
+            'unit_number' => strtoupper(fake()->bothify('?##')),
+            'unit_type' => $unitTypes[$bedrooms - 1] ?? 'Studio',
+            'bedrooms' => $bedrooms,
+            'bathrooms' => fake()->numberBetween(1, $bedrooms),
+            'size_sqft' => fake()->numberBetween(400, 2000),
+            'floor_level' => (string) fake()->numberBetween(1, 10),
+            'monthly_rent' => $rent,
+            'deposit_amount' => $rent,
+            'status' => 'available',
+            'description' => fake()->sentence(),
+            'commission_percentage' => 10.00,
+            'is_furnished' => fake()->boolean(30),
+            'allow_pets' => fake()->boolean(20),
+            'parking_available' => fake()->boolean(70),
+            'parking_spaces' => fake()->numberBetween(0, 2),
         ];
     }
 }

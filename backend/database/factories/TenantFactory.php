@@ -17,7 +17,12 @@ class TenantFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'company_name' => fake()->company(),
+            'pricing_model' => 'percentage',
+            'admin_email' => fake()->unique()->companyEmail(),
+            'admin_phone' => fake()->phoneNumber(),
+            'subscription_plan' => fake()->randomElement(['basic', 'professional', 'enterprise']),
+            'subscription_status' => 'active',
         ];
     }
 }

@@ -9,6 +9,9 @@ use App\Http\Controllers\Platform\Auth\PlatformLoginController;
 use App\Http\Controllers\Platform\TenantController;
 use App\Http\Controllers\Platform\DashboardController;
 use App\Http\Controllers\Platform\RevenueController;
+use App\Http\Controllers\Api\PropertyController;
+use App\Http\Controllers\Api\PropertyApprovalController;
+use App\Http\Controllers\Api\UnitController;
 
 /*
 |--------------------------------------------------------------------------
@@ -83,8 +86,27 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::middleware('tenant')->group(function () {
 
-        // Placeholder for future tenant-scoped routes
-        // These will be added in subsequent weeks
+        // ==========================================================================
+        // PROPERTY MANAGEMENT
+        // ==========================================================================
+        
+        // Properties
+        Route::apiResource('properties', PropertyController::class);
+        Route::post('properties/{id}/resubmit', [PropertyController::class, 'resubmit'])
+            ->name('properties.resubmit');
+        Route::post('properties/{id}/assign-manager', [PropertyController::class, 'assignManager'])
+            ->name('properties.assign-manager');
+        
+        // Property Approval (Admin only)
+        Route::patch('properties/{id}/approve', [PropertyApprovalController::class, 'approve'])
+            ->name('properties.approve');
+        Route::patch('properties/{id}/reject', [PropertyApprovalController::class, 'reject'])
+            ->name('properties.reject');
+        
+        // Units
+        Route::post('properties/{property}/units', [UnitController::class, 'store'])
+            ->name('units.store');
+        Route::apiResource('units', UnitController::class)->except(['store']);
 
     });
 
