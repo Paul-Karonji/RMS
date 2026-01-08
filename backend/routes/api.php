@@ -56,6 +56,25 @@ Route::prefix('public')->group(function () {
         ->name('public.reservations.cancel');
 });
 
+// ==========================================================================
+// WEBHOOK ROUTES (No authentication, signature verification in controller)
+// ==========================================================================
+
+Route::prefix('webhooks')->group(function () {
+    // Stripe webhooks
+    Route::post('stripe', [\App\Http\Controllers\Webhook\StripeWebhookController::class, 'handle'])
+        ->name('webhooks.stripe');
+    
+    // M-Pesa webhooks
+    Route::post('mpesa', [\App\Http\Controllers\Webhook\MpesaWebhookController::class, 'handle'])
+        ->name('webhooks.mpesa');
+    Route::post('mpesa/result', [\App\Http\Controllers\Webhook\MpesaWebhookController::class, 'result'])
+        ->name('webhooks.mpesa.result');
+    Route::post('mpesa/timeout', [\App\Http\Controllers\Webhook\MpesaWebhookController::class, 'timeout'])
+        ->name('webhooks.mpesa.timeout');
+});
+
+
 Route::prefix('auth')->group(function () {
     // Login
     Route::post('/login', [LoginController::class, 'login'])
@@ -157,6 +176,16 @@ Route::middleware('auth:sanctum')->group(function () {
             ->name('leases.terminate');
         Route::post('leases/{id}/renew', [\App\Http\Controllers\Api\LeaseController::class, 'renew'])
             ->name('leases.renew');
+
+        // ==========================================================================
+        // PAYMENT PROCESSING (Week 11)
+        // ==========================================================================
+        
+        // Payments
+        Route::apiResource('payments', \App\Http\Controllers\PaymentController::class);
+        Route::get('payments/{payment}/status', [\App\Http\Controllers\PaymentController::class, 'status'])
+            ->name('payments.status');
+
 
     });
 
