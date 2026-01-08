@@ -77,6 +77,15 @@ class User extends Authenticatable
     }
 
     /**
+     * Get the password for authentication.
+     * Laravel expects 'password' but we use 'password_hash'.
+     */
+    public function getAuthPassword()
+    {
+        return $this->password_hash;
+    }
+
+    /**
      * Get the tenant (company) this user belongs to.
      */
     public function tenant()
@@ -121,7 +130,16 @@ class User extends Authenticatable
      */
     public function leases()
     {
-        return $this->hasMany(Lease::class, 'tenant_id');
+        return $this->hasMany(Lease::class, 'tenant_user_id');
+    }
+
+    /**
+     * Get active leases for this tenant.
+     */
+    public function activeLeases()
+    {
+        return $this->hasMany(Lease::class, 'tenant_user_id')
+            ->where('status', 'active');
     }
 
     /**
