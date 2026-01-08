@@ -136,6 +136,26 @@ Route::middleware('auth:sanctum')->group(function () {
             ->name('units.store');
         Route::apiResource('units', UnitController::class)->except(['store']);
 
+        // ==========================================================================
+        // TENANT & LEASE MANAGEMENT (Week 9)
+        // ==========================================================================
+        
+        // Tenants (Renters)
+        Route::apiResource('tenants', \App\Http\Controllers\Api\TenantController::class);
+        
+        // Inquiry Approval
+        Route::patch('inquiries/{id}/approve', [\App\Http\Controllers\Api\InquiryApprovalController::class, 'approve'])
+            ->name('inquiries.approve');
+        Route::patch('inquiries/{id}/reject', [\App\Http\Controllers\Api\InquiryApprovalController::class, 'reject'])
+            ->name('inquiries.reject');
+        
+        // Leases
+        Route::apiResource('leases', \App\Http\Controllers\Api\LeaseController::class);
+        Route::patch('leases/{id}/terminate', [\App\Http\Controllers\Api\LeaseController::class, 'terminate'])
+            ->name('leases.terminate');
+        Route::post('leases/{id}/renew', [\App\Http\Controllers\Api\LeaseController::class, 'renew'])
+            ->name('leases.renew');
+
     });
 
     // ==========================================================================
