@@ -21,6 +21,53 @@ class InquiryApprovalController extends Controller
     }
 
     /**
+     * List all rental inquiries with filtering
+     */
+    public function index(): JsonResponse
+    {
+        $query = RentalInquiry::where('tenant_id', auth()->user()->tenant_id)
+            ->with(['unit.property']);
+
+        // Filter by status
+        if (request('status')) {
+            $query->where('status', request('status'));
+        }
+
+        // Filter by unit
+        if (request('unit_id')) {
+            $query->where('unit_id', request('unit_id'));
+        }
+
+        // Search by name, email, or phone
+        if (request('search')) {
+            $search = request('search');
+            $query->where(function ($q) use ($search) {
+                $q->where('full_name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%")
+                  ->orWhere('phone', 'like', "%{$search}%");
+            });
+        }
+
+        // Order by most recent
+        $query->orderBy('created_at', 'desc');
+
+        // Paginate
+        $perPage = request('per_page', 15);
+        $inquiries = $query->paginate($perPage);
+
+        return response()->json([
+            'success' => true,
+            'data' => RentalInquiryResource::collection($inquiries),
+            'meta' => [
+                'total' => $inquiries->total(),
+                'page' => $inquiries->currentPage(),
+                'per_page' => $inquiries->perPage(),
+                'last_page' => $inquiries->lastPage(),
+            ],
+        ]);
+    }
+
+    /**
      * Approve inquiry and create tenant account
      */
     public function approve(string $id): JsonResponse

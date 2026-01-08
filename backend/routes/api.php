@@ -143,7 +143,9 @@ Route::middleware('auth:sanctum')->group(function () {
         // Tenants (Renters)
         Route::apiResource('tenants', \App\Http\Controllers\Api\TenantController::class);
         
-        // Inquiry Approval
+        // Inquiry Management
+        Route::get('inquiries', [\App\Http\Controllers\Api\InquiryApprovalController::class, 'index'])
+            ->name('inquiries.index');
         Route::patch('inquiries/{id}/approve', [\App\Http\Controllers\Api\InquiryApprovalController::class, 'approve'])
             ->name('inquiries.approve');
         Route::patch('inquiries/{id}/reject', [\App\Http\Controllers\Api\InquiryApprovalController::class, 'reject'])

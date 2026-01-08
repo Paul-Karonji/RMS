@@ -12,6 +12,8 @@ import {
   XMarkIcon,
   ArrowRightOnRectangleIcon,
   UserCircleIcon,
+  InboxIcon,
+  DocumentTextIcon,
 } from '@heroicons/react/24/outline';
 
 const navigation = [
@@ -19,6 +21,8 @@ const navigation = [
   { name: 'Properties', href: '/company/properties', icon: BuildingOfficeIcon },
   { name: 'Units', href: '/company/units', icon: HomeModernIcon },
   { name: 'Tenants', href: '/company/tenants', icon: UserGroupIcon },
+  { name: 'Inquiries', href: '/company/inquiries', icon: InboxIcon },
+  { name: 'Leases', href: '/company/leases', icon: DocumentTextIcon },
   { name: 'Payments', href: '/company/payments', icon: CurrencyDollarIcon },
   { name: 'Maintenance', href: '/company/maintenance', icon: WrenchScrewdriverIcon },
 ];
@@ -45,9 +49,8 @@ const CompanyLayout = () => {
 
       {/* Mobile sidebar */}
       <div
-        className={`fixed inset-y-0 left-0 z-50 w-64 bg-surface shadow-lg transform transition-transform duration-300 ease-in-out lg:hidden ${
-          sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-        }`}
+        className={`fixed inset-y-0 left-0 z-50 w-64 bg-surface shadow-lg transform transition-transform duration-300 ease-in-out lg:hidden ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+          }`}
       >
         <div className="flex items-center justify-between h-16 px-4 border-b border-slate-200">
           <div className="flex items-center gap-2">
@@ -70,10 +73,9 @@ const CompanyLayout = () => {
               to={item.href}
               onClick={() => setSidebarOpen(false)}
               className={({ isActive }) =>
-                `flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${
-                  isActive
-                    ? 'bg-primary text-white'
-                    : 'text-muted hover:bg-slate-100 hover:text-text'
+                `flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${isActive
+                  ? 'bg-primary text-white'
+                  : 'text-muted hover:bg-slate-100 hover:text-text'
                 }`
               }
             >
@@ -102,10 +104,9 @@ const CompanyLayout = () => {
                 key={item.name}
                 to={item.href}
                 className={({ isActive }) =>
-                  `flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${
-                    isActive
-                      ? 'bg-primary text-white'
-                      : 'text-muted hover:bg-slate-100 hover:text-text'
+                  `flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${isActive
+                    ? 'bg-primary text-white'
+                    : 'text-muted hover:bg-slate-100 hover:text-text'
                   }`
                 }
               >

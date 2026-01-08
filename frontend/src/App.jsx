@@ -39,6 +39,16 @@ import {
   ReservationCheckout,
 } from './pages/public';
 
+// Tenant & Lease Management Pages (Week 10)
+import {
+  Tenants,
+  TenantForm,
+  TenantDetails,
+  Inquiries,
+  Leases,
+  LeaseForm,
+} from './pages/tenants';
+
 function App() {
   return (
     <AuthProvider>
@@ -81,6 +91,16 @@ function App() {
               <Route path="properties/:id/edit" element={<EditProperty />} />
               <Route path="properties/:id/units/create" element={<CreateUnit />} />
               <Route path="units/:id/edit" element={<EditUnit />} />
+
+              {/* Tenant & Lease Management (Week 10) */}
+              <Route path="tenants" element={<Tenants />} />
+              <Route path="tenants/create" element={<TenantForm />} />
+              <Route path="tenants/:id" element={<TenantDetails />} />
+              <Route path="tenants/:id/edit" element={<TenantForm />} />
+              <Route path="inquiries" element={<Inquiries />} />
+              <Route path="leases" element={<Leases />} />
+              <Route path="leases/create" element={<LeaseForm />} />
+              <Route path="leases/:id/edit" element={<LeaseForm />} />
             </Route>
           </Route>
 
