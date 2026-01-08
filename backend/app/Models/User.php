@@ -311,11 +311,4 @@ class User extends Authenticatable
         return false;
     }
 
-    /**
-     * Get the password for authentication.
-     */
-    public function getAuthPassword()
-    {
-        return $this->password_hash;
-    }
 }
