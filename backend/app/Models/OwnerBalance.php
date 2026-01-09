@@ -16,7 +16,10 @@ class OwnerBalance extends BaseTenantModel
      * @var array
      */
     protected $fillable = [
+        'tenant_id',  // Added for multi-tenancy
         'property_owner_id',
+        'total_rent_collected',  // Added for balance tracking
+        'total_expenses',  // Added for balance tracking
         'amount_owed',
         'amount_paid',
         'last_payment_date',

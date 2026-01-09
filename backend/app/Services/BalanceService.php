@@ -7,6 +7,7 @@ use App\Models\CompanyBalance;
 use App\Models\OwnerBalance;
 use App\Models\PlatformFee;
 use App\Models\BalanceTransaction;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -27,22 +28,32 @@ class BalanceService
             $property = $lease->property;
             $owner = $property->propertyOwner;
 
+            // Get the actual tenant company ID (not user ID)
+            // lease.tenant_id references users table, but company_balances.tenant_id references tenants table
+            $tenantUser = User::find($lease->tenant_id);
+            
+            if (!$tenantUser || !$tenantUser->tenant_id) {
+                throw new \Exception("User {$lease->tenant_id} does not have a tenant_id. Cannot process payment.");
+            }
+            
+            $tenantId = $tenantUser->tenant_id;
+
             // Calculate platform fee
             $platformFeePercentage = $property->commission_percentage ?? config('services.platform.fee_percentage', 10.00);
             $platformFeeAmount = $this->calculatePlatformFee($payment->amount, $platformFeePercentage);
             $ownerAmount = $payment->amount - $platformFeeAmount;
 
-            // Update company balance
-            $this->updateCompanyBalance($lease->tenant_id, $platformFeeAmount, $payment);
+            // Update company balance with correct tenant ID
+            $this->updateCompanyBalance($tenantId, $platformFeeAmount, $payment);
 
             // Update owner balance
-            $this->updateOwnerBalance($owner->id, $payment->amount, $platformFeeAmount, $payment);
+            $this->updateOwnerBalance($tenantId, $owner->id, $payment->amount, $platformFeeAmount, $payment);
 
             // Create platform fee record
-            $this->createPlatformFeeRecord($payment, $property, $platformFeePercentage, $platformFeeAmount);
+            $this->createPlatformFeeRecord($tenantId, $payment, $property, $platformFeePercentage, $platformFeeAmount);
 
             // Log balance transaction
-            $this->logBalanceTransaction($payment, $platformFeeAmount, $ownerAmount);
+            $this->logBalanceTransaction($tenantId, $payment, $platformFeeAmount, $ownerAmount);
 
             DB::commit();
 
@@ -91,15 +102,13 @@ class BalanceService
         $companyBalance = CompanyBalance::firstOrCreate(
             ['tenant_id' => $tenantId],
             [
-                'total_rent_collected' => 0,
+                'total_collected' => 0,
                 'platform_fees_collected' => 0,
-                'total_expenses' => 0,
-                'pending_cashout' => 0,
                 'available_balance' => 0,
             ]
         );
 
-        $companyBalance->increment('total_rent_collected', $payment->amount);
+        $companyBalance->increment('total_collected', $payment->amount);
         $companyBalance->increment('platform_fees_collected', $platformFee);
         $companyBalance->increment('available_balance', $platformFee);
 
@@ -113,28 +122,38 @@ class BalanceService
     /**
      * Update owner balance
      *
+     * @param string $tenantId
      * @param string $ownerId
      * @param float $rentAmount
      * @param float $platformFee
      * @param Payment $payment
      * @return void
      */
-    private function updateOwnerBalance(string $ownerId, float $rentAmount, float $platformFee, Payment $payment): void
+    private function updateOwnerBalance(string $tenantId, string $ownerId, float $rentAmount, float $platformFee, Payment $payment): void
     {
-        $ownerBalance = OwnerBalance::firstOrCreate(
-            ['property_owner_id' => $ownerId],
-            [
-                'total_rent_collected' => 0,
-                'total_expenses' => 0,
-                'total_paid_out' => 0,
-                'pending_balance' => 0,
-            ]
-        );
+        // Try to find existing owner balance
+        $ownerBalance = OwnerBalance::where('tenant_id', $tenantId)
+            ->where('property_owner_id', $ownerId)
+            ->first();
 
-        $ownerBalance->increment('total_rent_collected', $rentAmount);
-        $ownerBalance->increment('pending_balance', $rentAmount - $platformFee);
+        if ($ownerBalance) {
+            // Update existing balance
+            $ownerBalance->increment('total_rent_collected', $rentAmount);
+            $ownerBalance->increment('amount_owed', $rentAmount - $platformFee);
+        } else {
+            // Create new balance
+            $ownerBalance = OwnerBalance::create([
+                'tenant_id' => $tenantId,
+                'property_owner_id' => $ownerId,
+                'total_rent_collected' => $rentAmount,
+                'total_expenses' => 0,
+                'total_paid' => 0,
+                'amount_owed' => $rentAmount - $platformFee,
+            ]);
+        }
 
         Log::info('Owner balance updated', [
+            'tenant_id' => $tenantId,
             'owner_id' => $ownerId,
             'rent_amount' => $rentAmount,
             'platform_fee' => $platformFee,
@@ -151,16 +170,15 @@ class BalanceService
      * @param float $feeAmount
      * @return void
      */
-    private function createPlatformFeeRecord(Payment $payment, $property, float $feePercentage, float $feeAmount): void
+    private function createPlatformFeeRecord(string $tenantId, Payment $payment, $property, float $feePercentage, float $feeAmount): void
     {
         PlatformFee::create([
-            'tenant_id' => $payment->tenant_id,
+            'tenant_id' => $tenantId,
             'payment_id' => $payment->id,
-            'property_id' => $property->id,
             'fee_type' => $payment->payment_type,
             'fee_percentage' => $feePercentage,
             'fee_amount' => $feeAmount,
-            'base_amount' => $payment->amount,
+            'payment_amount' => $payment->amount,
         ]);
 
         Log::info('Platform fee record created', [
@@ -177,10 +195,10 @@ class BalanceService
      * @param float $ownerAmount
      * @return void
      */
-    private function logBalanceTransaction(Payment $payment, float $platformFee, float $ownerAmount): void
+    private function logBalanceTransaction(string $tenantId, Payment $payment, float $platformFee, float $ownerAmount): void
     {
         BalanceTransaction::create([
-            'tenant_id' => $payment->tenant_id,
+            'tenant_id' => $tenantId,
             'payment_id' => $payment->id,
             'property_owner_id' => $payment->lease->property->property_owner_id,
             'transaction_type' => $payment->payment_type . '_payment',

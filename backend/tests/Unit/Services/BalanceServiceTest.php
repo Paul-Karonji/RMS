@@ -69,9 +69,9 @@ class BalanceServiceTest extends TestCase
         $this->assertTrue($result);
 
         // Assert company balance updated correctly
-        $companyBalance = CompanyBalance::where('tenant_id', $lease->tenant_id)->first();
+        $companyBalance = CompanyBalance::where('tenant_id', $tenant->id)->first();
         $this->assertNotNull($companyBalance);
-        $this->assertEquals(50000, $companyBalance->total_rent_collected);
+        $this->assertEquals(50000, $companyBalance->total_collected);
         $this->assertEquals(5000, $companyBalance->platform_fees_collected); // 10% of 50,000
         $this->assertEquals(5000, $companyBalance->available_balance);
 
@@ -79,14 +79,14 @@ class BalanceServiceTest extends TestCase
         $ownerBalance = OwnerBalance::where('property_owner_id', $owner->id)->first();
         $this->assertNotNull($ownerBalance);
         $this->assertEquals(50000, $ownerBalance->total_rent_collected);
-        $this->assertEquals(45000, $ownerBalance->pending_balance); // 50,000 - 5,000 fee
+        $this->assertEquals(45000, $ownerBalance->amount_owed); // 50,000 - 5,000 fee
 
         // Assert platform fee record created
         $platformFee = PlatformFee::where('payment_id', $payment->id)->first();
         $this->assertNotNull($platformFee);
         $this->assertEquals(10.00, $platformFee->fee_percentage);
         $this->assertEquals(5000, $platformFee->fee_amount);
-        $this->assertEquals(50000, $platformFee->base_amount);
+        $this->assertEquals(50000, $platformFee->payment_amount);
 
         // Assert balance transaction logged
         $transaction = BalanceTransaction::where('payment_id', $payment->id)->first();
@@ -136,11 +136,11 @@ class BalanceServiceTest extends TestCase
 
         $this->assertTrue($result);
 
-        $companyBalance = CompanyBalance::where('tenant_id', $lease->tenant_id)->first();
+        $companyBalance = CompanyBalance::where('tenant_id', $tenant->id)->first();
         $this->assertEquals(15000, $companyBalance->platform_fees_collected); // 15% of 100,000
 
         $ownerBalance = OwnerBalance::where('property_owner_id', $owner->id)->first();
-        $this->assertEquals(85000, $ownerBalance->pending_balance); // 100,000 - 15,000
+        $this->assertEquals(85000, $ownerBalance->amount_owed); // 100,000 - 15,000
     }
 
     /** @test */
@@ -194,12 +194,12 @@ class BalanceServiceTest extends TestCase
         $this->balanceService->updateBalancesAfterPayment($payment2);
 
         // Assert accumulated balances
-        $companyBalance = CompanyBalance::where('tenant_id', $lease->tenant_id)->first();
-        $this->assertEquals(80000, $companyBalance->total_rent_collected); // 50,000 + 30,000
+        $companyBalance = CompanyBalance::where('tenant_id', $tenant->id)->first();
+        $this->assertEquals(80000, $companyBalance->total_collected); // 50,000 + 30,000
         $this->assertEquals(8000, $companyBalance->platform_fees_collected); // 5,000 + 3,000
 
         $ownerBalance = OwnerBalance::where('property_owner_id', $owner->id)->first();
         $this->assertEquals(80000, $ownerBalance->total_rent_collected);
-        $this->assertEquals(72000, $ownerBalance->pending_balance); // 45,000 + 27,000
+        $this->assertEquals(72000, $ownerBalance->amount_owed); // 45,000 + 27,000
     }
 }
