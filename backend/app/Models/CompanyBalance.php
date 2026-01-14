@@ -15,8 +15,11 @@ class CompanyBalance extends BaseTenantModel
         'tenant_id',
         'available_balance',
         'pending_balance',
+        'platform_fees_collected',
         'total_collected',
         'total_withdrawn',
+        'total_cashed_out',
+        'total_platform_fees_paid',
         'last_cashout_at',
         'last_cashout_amount',
     ];
@@ -29,8 +32,11 @@ class CompanyBalance extends BaseTenantModel
     protected $casts = [
         'available_balance' => 'decimal:2',
         'pending_balance' => 'decimal:2',
+        'platform_fees_collected' => 'decimal:2',
         'total_collected' => 'decimal:2',
         'total_withdrawn' => 'decimal:2',
+        'total_cashed_out' => 'decimal:2',
+        'total_platform_fees_paid' => 'decimal:2',
         'last_cashout_at' => 'datetime',
         'last_cashout_amount' => 'decimal:2',
     ];

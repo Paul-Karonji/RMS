@@ -186,6 +186,24 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('payments/{payment}/status', [\App\Http\Controllers\PaymentController::class, 'status'])
             ->name('payments.status');
 
+        // ==========================================================================
+        // PAYOUT SYSTEM (Week 14)
+        // ==========================================================================
+        
+        // Cashout Requests (Company withdraws balance)
+        Route::get('cashout-requests', [\App\Http\Controllers\CashoutRequestController::class, 'index'])
+            ->name('cashout-requests.index');
+        Route::post('cashout-requests', [\App\Http\Controllers\CashoutRequestController::class, 'store'])
+            ->name('cashout-requests.store');
+        Route::get('cashout-requests/{cashoutRequest}', [\App\Http\Controllers\CashoutRequestController::class, 'show'])
+            ->name('cashout-requests.show');
+        
+        // Owner Payments (Company marks offline payments to property owners)
+        Route::get('owner-payments', [\App\Http\Controllers\OwnerPaymentController::class, 'index'])
+            ->name('owner-payments.index');
+        Route::post('owner-payments', [\App\Http\Controllers\OwnerPaymentController::class, 'store'])
+            ->name('owner-payments.store');
+
 
     });
 
@@ -209,6 +227,16 @@ Route::middleware('auth:sanctum')->group(function () {
             ->name('platform.tenants.suspend');
         Route::post('tenants/{tenant}/activate', [TenantController::class, 'activate'])
             ->name('platform.tenants.activate');
+        
+        // Cashout Approvals (Week 14)
+        Route::get('cashout-requests', [\App\Http\Controllers\Platform\CashoutApprovalController::class, 'index'])
+            ->name('platform.cashout-requests.index');
+        Route::patch('cashout-requests/{id}/approve', [\App\Http\Controllers\Platform\CashoutApprovalController::class, 'approve'])
+            ->name('platform.cashout-requests.approve');
+        Route::patch('cashout-requests/{id}/reject', [\App\Http\Controllers\Platform\CashoutApprovalController::class, 'reject'])
+            ->name('platform.cashout-requests.reject');
+        Route::patch('cashout-requests/{id}/process', [\App\Http\Controllers\Platform\CashoutApprovalController::class, 'process'])
+            ->name('platform.cashout-requests.process');
     });
 
     // Company Admin Routes

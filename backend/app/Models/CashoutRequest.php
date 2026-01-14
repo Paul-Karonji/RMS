@@ -16,6 +16,8 @@ class CashoutRequest extends BaseTenantModel
      * @var array
      */
     protected $fillable = [
+        'id',
+        'tenant_id',
         'amount',
         'fee_amount',
         'net_amount',
@@ -40,6 +42,7 @@ class CashoutRequest extends BaseTenantModel
         'amount' => 'decimal:2',
         'fee_amount' => 'decimal:2',
         'net_amount' => 'decimal:2',
+        'payment_details' => 'array',
         'approved_at' => 'datetime',
         'rejected_at' => 'datetime',
         'processed_at' => 'datetime',

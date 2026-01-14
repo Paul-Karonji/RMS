@@ -16,6 +16,8 @@ class OwnerPayment extends BaseTenantModel
      * @var array
      */
     protected $fillable = [
+        'id',
+        'tenant_id',
         'property_owner_id',
         'amount',
         'payment_date',
