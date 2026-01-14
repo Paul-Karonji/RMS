@@ -22,11 +22,37 @@ class PaymentController extends Controller
 
     /**
      * Display a listing of payments
+     * 
+     * Optimized with:
+     * - Proper tenant company filtering via whereHas
+     * - Eager loading with specific columns
+     * - Select only needed columns
+     * - Proper indexing support
      */
     public function index(Request $request): JsonResponse
     {
-        $query = Payment::with(['lease.unit', 'lease.property'])
-            ->where('tenant_id', $request->user()->tenant_id);
+        $user = $request->user();
+        
+        // Get tenant company ID from authenticated user
+        $tenantCompanyId = $user->tenant_id; // This is tenants.id
+        
+        // Query payments where the tenant user belongs to the company
+        // Note: payments.tenant_id references users.id (the tenant user)
+        $query = Payment::query()
+            ->whereHas('tenant', function ($q) use ($tenantCompanyId) {
+                $q->where('tenant_id', $tenantCompanyId);
+            })
+            ->with([
+                'lease:id,unit_id,monthly_rent,status,tenant_id',
+                'lease.unit:id,unit_number,property_id',
+                'lease.unit.property:id,property_name',
+                'tenant:id,name,email'
+            ])
+            ->select([
+                'id', 'tenant_id', 'lease_id', 'payment_type',
+                'amount', 'payment_method', 'status', 
+                'payment_date', 'transaction_id', 'created_at'
+            ]);
 
         // Filter by status
         if ($request->has('status')) {
@@ -36,6 +62,11 @@ class PaymentController extends Controller
         // Filter by payment type
         if ($request->has('payment_type')) {
             $query->where('payment_type', $request->payment_type);
+        }
+        
+        // Filter by payment method
+        if ($request->has('payment_method')) {
+            $query->where('payment_method', $request->payment_method);
         }
 
         // Filter by date range

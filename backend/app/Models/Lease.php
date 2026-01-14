@@ -91,6 +91,14 @@ class Lease extends BaseTenantModel
     }
 
     /**
+     * Alias for creator() - for consistency with eager loading
+     */
+    public function createdBy()
+    {
+        return $this->creator();
+    }
+
+    /**
      * Get payments for this lease.
      */
     public function payments()

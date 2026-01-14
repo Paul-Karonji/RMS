@@ -24,18 +24,48 @@ class LeaseController extends Controller
 
     /**
      * Display a listing of leases
+     * 
+     * Optimized with:
+     * - Proper tenant company filtering via whereHas
+     * - Eager loading with specific columns
+     * - Select only needed columns
+     * - Proper indexing support
      */
     public function index(): JsonResponse
     {
-        $query = Lease::where('tenant_id', auth()->user()->tenant_id)
-            ->with(['property', 'unit', 'tenant']);
+        $user = auth()->user();
+        
+        // Get tenant company ID from authenticated user
+        $tenantCompanyId = $user->tenant_id; // This is tenants.id
+        
+        // Query leases where the tenant user belongs to the company
+        // Note: leases.tenant_id references users.id (the tenant user)
+        // We need to filter by the company the tenant belongs to
+        $query = Lease::query()
+            ->whereHas('tenant', function ($q) use ($tenantCompanyId) {
+                $q->where('tenant_id', $tenantCompanyId);
+            })
+            ->with([
+                'property:id,property_name,address,city,tenant_id',
+                'property.owner:id,name,email',
+                'unit:id,property_id,unit_number,unit_type,rent_amount,status',
+                'tenant:id,name,email,phone,tenant_id',
+                'createdBy:id,name'
+            ])
+            ->select([
+                'id', 'tenant_id', 'property_id', 'unit_id', 
+                'property_owner_id', 'start_date', 'end_date', 
+                'monthly_rent', 'deposit_amount', 'status', 
+                'payment_type', 'payment_frequency', 'created_at'
+            ]);
 
         // Filter by status if provided
         if (request()->has('status')) {
             $query->where('status', request('status'));
         }
 
-        $leases = $query->latest()->paginate(20);
+        // Order by most recent first
+        $leases = $query->latest('created_at')->paginate(20);
 
         return response()->json([
             'success' => true,
