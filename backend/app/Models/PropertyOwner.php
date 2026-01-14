@@ -16,6 +16,8 @@ class PropertyOwner extends BaseTenantModel
      * @var array
      */
     protected $fillable = [
+        'id',
+        'tenant_id',
         'user_id',
         'owner_name',
         'email',

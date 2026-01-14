@@ -16,6 +16,8 @@ class Property extends BaseTenantModel
      * @var array
      */
     protected $fillable = [
+        'id',
+        'tenant_id',
         'property_owner_id',
         'property_name',
         'name',

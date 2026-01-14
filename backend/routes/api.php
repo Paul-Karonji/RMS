@@ -257,4 +257,32 @@ Route::middleware('auth:sanctum')->group(function () {
         // These will be added in subsequent weeks
     });
 
+    // ==========================================================================
+    // WEEK 15: DASHBOARDS & REPORTING
+    // ==========================================================================
+    
+    // Company Dashboard (Company Admin)
+    Route::middleware(['tenant', 'role:company_admin'])->group(function () {
+        Route::get('dashboard/company', [\App\Http\Controllers\Dashboard\CompanyDashboardController::class, 'index']);
+    });
+    
+    // Owner Dashboard (Property Owner)
+    Route::middleware(['tenant', 'role:property_owner'])->group(function () {
+        Route::get('dashboard/owner', [\App\Http\Controllers\Dashboard\OwnerDashboardController::class, 'index']);
+    });
+    
+    // Tenant Dashboard (Tenant Renter)
+    Route::middleware(['tenant', 'role:tenant'])->group(function () {
+        Route::get('dashboard/tenant', [\App\Http\Controllers\Dashboard\TenantDashboardController::class, 'index']);
+    });
+    
+    // Reports (Company Admin)
+    Route::middleware(['tenant', 'role:company_admin'])->prefix('reports')->group(function () {
+        Route::get('financial', [\App\Http\Controllers\ReportController::class, 'financial']);
+        Route::get('occupancy', [\App\Http\Controllers\ReportController::class, 'occupancy']);
+        Route::get('payments', [\App\Http\Controllers\ReportController::class, 'payments']);
+        Route::get('owner-statement', [\App\Http\Controllers\ReportController::class, 'ownerStatement']);
+        Route::post('export', [\App\Http\Controllers\ReportController::class, 'export']);
+    });
+
 });
