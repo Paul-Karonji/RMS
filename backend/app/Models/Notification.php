@@ -16,10 +16,13 @@ class Notification extends BaseTenantModel
      * @var array
      */
     protected $fillable = [
+        'id',
+        'tenant_id',
         'user_id',
         'type',
         'title',
         'message',
+        'status',
         'data',
         'read_at',
     ];

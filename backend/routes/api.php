@@ -204,6 +204,54 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('owner-payments', [\App\Http\Controllers\OwnerPaymentController::class, 'store'])
             ->name('owner-payments.store');
 
+        // ==========================================================================
+        // NOTIFICATIONS (Week 16)
+        // ==========================================================================
+        
+        // Notifications
+        Route::get('notifications', [\App\Http\Controllers\Api\NotificationController::class, 'index'])
+            ->name('notifications.index');
+        Route::get('notifications/unread-count', [\App\Http\Controllers\Api\NotificationController::class, 'unreadCount'])
+            ->name('notifications.unread-count');
+        Route::get('notifications/recent', [\App\Http\Controllers\Api\NotificationController::class, 'recent'])
+            ->name('notifications.recent');
+        Route::patch('notifications/{id}/read', [\App\Http\Controllers\Api\NotificationController::class, 'markAsRead'])
+            ->name('notifications.mark-as-read');
+        Route::patch('notifications/read-all', [\App\Http\Controllers\Api\NotificationController::class, 'markAllAsRead'])
+            ->name('notifications.mark-all-as-read');
+        Route::delete('notifications/{id}', [\App\Http\Controllers\Api\NotificationController::class, 'destroy'])
+            ->name('notifications.destroy');
+        Route::delete('notifications/read/all', [\App\Http\Controllers\Api\NotificationController::class, 'deleteAllRead'])
+            ->name('notifications.delete-all-read');
+
+        // ==========================================================================
+        // CHANGE REQUESTS (Week 16)
+        // ==========================================================================
+        
+        // Change Requests
+        Route::get('change-requests', [\App\Http\Controllers\Api\ChangeRequestController::class, 'index'])
+            ->name('change-requests.index');
+        Route::post('change-requests', [\App\Http\Controllers\Api\ChangeRequestController::class, 'store'])
+            ->name('change-requests.store');
+        Route::get('change-requests/{id}', [\App\Http\Controllers\Api\ChangeRequestController::class, 'show'])
+            ->name('change-requests.show');
+        Route::patch('change-requests/{id}/approve', [\App\Http\Controllers\Api\ChangeRequestController::class, 'approve'])
+            ->name('change-requests.approve');
+        Route::patch('change-requests/{id}/reject', [\App\Http\Controllers\Api\ChangeRequestController::class, 'reject'])
+            ->name('change-requests.reject');
+
+        // ==========================================================================
+        // AUDIT LOGS (Week 16)
+        // ==========================================================================
+        
+        // Audit Logs (Company Admin only)
+        Route::middleware('role:company_admin')->group(function () {
+            Route::get('audit-logs', [\App\Http\Controllers\Api\AuditLogController::class, 'index'])
+                ->name('audit-logs.index');
+            Route::get('audit-logs/export', [\App\Http\Controllers\Api\AuditLogController::class, 'export'])
+                ->name('audit-logs.export');
+        });
+
 
     });
 
