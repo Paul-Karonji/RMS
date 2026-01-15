@@ -40,7 +40,7 @@ class ChangeRequestServiceTest extends TestCase
         
         $this->property = Property::factory()->create([
             'tenant_id' => $tenant->id,
-            'owner_id' => $this->owner->id,
+            'property_owner_id' => $this->owner->id,
         ]);
         
         $this->unit = Unit::factory()->create([
