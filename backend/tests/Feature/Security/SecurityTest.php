@@ -58,7 +58,7 @@ class SecurityTest extends TestCase
         $owner2 = PropertyOwner::factory()->create(['tenant_id' => $tenant2->id]);
         $property2 = Property::factory()->create([
             'tenant_id' => $tenant2->id,
-            'owner_id' => $owner2->id,
+            'property_owner_id' => $owner2->id,
         ]);
 
         // User1 tries to access tenant2's property
@@ -113,7 +113,7 @@ class SecurityTest extends TestCase
         $response = $this->actingAs($user, 'sanctum')
             ->postJson('/api/properties', [
                 'name' => '<script>alert("XSS")</script>',
-                'owner_id' => $owner->id,
+                'property_owner_id' => $owner->id,
                 'address' => 'Test Address',
                 'city' => 'Test City',
                 'state' => 'Test State',
@@ -191,7 +191,7 @@ class SecurityTest extends TestCase
         $response = $this->actingAs($user, 'sanctum')
             ->postJson('/api/properties', [
                 'name' => 'Test Property',
-                'owner_id' => $owner->id,
+                'property_owner_id' => $owner->id,
                 'address' => 'Test Address',
                 'city' => 'Nairobi',
                 'state' => 'Nairobi',

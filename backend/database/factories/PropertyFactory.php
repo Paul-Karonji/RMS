@@ -35,7 +35,7 @@ class PropertyFactory extends Factory
             'total_units' => $totalUnits,
             'occupied_units' => 0,
             'vacant_units' => $totalUnits,
-            'status' => 'pending_approval',
+            'status' => 'active',
             'commission_percentage' => 10.00,
         ];
     }

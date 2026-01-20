@@ -35,7 +35,7 @@ class ChangeRequestServiceTest extends TestCase
         
         $this->user = User::factory()->create([
             'tenant_id' => $tenant->id,
-            'property_owner_id' => $this->owner->id,
+            'role' => 'company_admin',
         ]);
         
         $this->property = Property::factory()->create([

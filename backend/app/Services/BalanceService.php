@@ -157,7 +157,7 @@ class BalanceService
             'owner_id' => $ownerId,
             'rent_amount' => $rentAmount,
             'platform_fee' => $platformFee,
-            'new_pending' => $ownerBalance->pending_balance,
+            'new_amount_owed' => $ownerBalance->amount_owed,
         ]);
     }
 

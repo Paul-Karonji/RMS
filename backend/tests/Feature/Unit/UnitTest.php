@@ -24,9 +24,6 @@ class UnitTest extends TestCase
     {
         parent::setUp();
 
-        // Seed roles and permissions for testing
-        $this->artisan('db:seed', ['--class' => 'RolePermissionSeeder']);
-
         $this->tenant = Tenant::factory()->create([
             'company_name' => 'Test Company',
         ]);

@@ -5,10 +5,11 @@ namespace App\Models;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\Permission\Traits\HasRoles;
 
 class PlatformUser extends Authenticatable
 {
-    use HasUuids, HasApiTokens;
+    use HasUuids, HasApiTokens, HasRoles;
 
     /**
      * Indicates if the model's ID is auto-incrementing.

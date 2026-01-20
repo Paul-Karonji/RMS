@@ -16,8 +16,19 @@ class BalanceTransactionFactory extends Factory
      */
     public function definition(): array
     {
+        $balanceBefore = fake()->randomFloat(2, 0, 100000);
+        $amount = fake()->randomFloat(2, 100, 10000);
+        
         return [
-            //
+            'tenant_id' => \App\Models\Tenant::factory(),
+            'property_owner_id' => \App\Models\PropertyOwner::factory(),
+            'transaction_type' => fake()->randomElement(['payment_received', 'expense_deducted', 'fee_deducted', 'payout_made']),
+            'amount' => $amount,
+            'balance_before' => $balanceBefore,
+            'balance_after' => $balanceBefore + $amount,
+            'description' => fake()->sentence(),
+            'reference_type' => null,
+            'reference_id' => null,
         ];
     }
 }

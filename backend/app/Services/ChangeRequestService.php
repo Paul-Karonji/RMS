@@ -84,14 +84,16 @@ class ChangeRequestService
         // Apply the changes
         $this->applyChanges($request);
 
-        // Notify owner
-        $this->notificationService->create(
-            user: $request->propertyOwner->user,
-            type: 'change_request_approved',
-            title: 'Change Request Approved',
-            message: "Your change request for {$request->request_type} has been approved.",
-            data: ['change_request_id' => $request->id]
-        );
+        // Notify owner if they have a user account
+        if ($request->propertyOwner->user) {
+            $this->notificationService->create(
+                user: $request->propertyOwner->user,
+                type: 'change_request_approved',
+                title: 'Change Request Approved',
+                message: "Your change request for {$request->request_type} has been approved.",
+                data: ['change_request_id' => $request->id]
+            );
+        }
 
         return $request->fresh();
     }
@@ -108,14 +110,16 @@ class ChangeRequestService
             'review_notes' => $reason,
         ]);
 
-        // Notify owner
-        $this->notificationService->create(
-            user: $request->propertyOwner->user,
-            type: 'change_request_rejected',
-            title: 'Change Request Rejected',
-            message: "Your change request for {$request->request_type} was rejected. Reason: {$reason}",
-            data: ['change_request_id' => $request->id]
-        );
+        // Notify owner if they have a user account
+        if ($request->propertyOwner->user) {
+            $this->notificationService->create(
+                user: $request->propertyOwner->user,
+                type: 'change_request_rejected',
+                title: 'Change Request Rejected',
+                message: "Your change request for {$request->request_type} was rejected. Reason: {$reason}",
+                data: ['change_request_id' => $request->id]
+            );
+        }
 
         return $request->fresh();
     }
