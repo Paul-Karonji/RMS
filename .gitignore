@@ -225,8 +225,7 @@ yarn.lock
 *.xlsx
 *.pdf
 
-# Project documentation files (keep local only)
+# Project documentation files (keep local only - but allow deployment docs)
 rental_saas_*.txt
 rental_saas_*.sql
-*.md
- 
+# Note: Removed *.md to allow DEPLOYMENT_INSTRUCTIONS.md, RENDER_FIX.md, etc.
