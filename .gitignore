@@ -3,6 +3,7 @@
 .env.backup
 .env.*.php
 .env.local
+.env.production
 .phpunit.result.cache
 .php_cs.cache
 Homestead.json
